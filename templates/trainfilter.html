@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TravelGo - Train Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f4f8fb;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .topbar {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card-custom {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+    }
+    .card-custom:hover {
+      transform: scale(1.02);
+    }
+    .train-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .form-section, .payment-section, .confirmation-section, .class-section {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    .confirmation-box {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <h4 class="text-white m-0">TravelGo - Train Booking</h4>
+</div>
+
+<div class="container py-4">
+  <!-- Trains -->
+  <div class="row" id="train-list">
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://m.economictimes.com/thumb/msid-122059787,width-1600,height-900,resizemode-4,imgsize-39456/irctc-shares-in-focus-as-indian-railways-to-hike-passenger-fares-from-july-1.jpg" class="train-img" alt="IRCTC Express">
+        <div class="card-body">
+          <h5 class="card-title">IRCTC Express</h5>
+          <button class="btn btn-primary w-100" onclick="showClassSelection('IRCTC Express')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://st.indiarailinfo.com/kjfdsuiemjvcya23/0/0/2/2/4482022/0/psx20191108164411673442.jpg" class="train-img" alt="Shatabdi Express">
+        <div class="card-body">
+          <h5 class="card-title">Shatabdi Express</h5>
+          <button class="btn btn-primary w-100" onclick="showClassSelection('Shatabdi Express')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://i.ytimg.com/vi/PXYqlLz28kA/mqdefault.jpg" class="train-img" alt="Rajdhani Express">
+        <div class="card-body">
+          <h5 class="card-title">Rajdhani Express</h5>
+          <button class="btn btn-primary w-100" onclick="showClassSelection('Rajdhani Express')">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Class Section -->
+  <div class="class-section" id="class-section">
+    <h3 class="text-center mb-4" id="selected-train-title"></h3>
+    <div class="row text-center">
+      <div class="col-md-4 mb-3">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>General</h5>
+          <button class="btn btn-success" onclick="selectClass('General')">Select</button>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>Sleeper</h5>
+          <button class="btn btn-success" onclick="selectClass('Sleeper')">Select</button>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>AC</h5>
+          <button class="btn btn-success" onclick="selectClass('AC')">Select</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="form-section" id="booking-form">
+    <h3>Passenger Details</h3>
+    <form onsubmit="event.preventDefault(); showPayment();">
+      <div class="mb-3">
+        <label>Train</label>
+        <input type="text" id="train-name" class="form-control" readonly />
+      </div>
+      <div class="mb-3">
+        <label>Class</label>
+        <input type="text" id="train-class" class="form-control" readonly />
+      </div>
+      <div class="mb-3">
+        <label>Seat</label>
+        <input type="text" id="seat-number" class="form-control" readonly />
+        <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#seatModal">Select Seat</button>
+      </div>
+      <div class="mb-3">
+        <label>From</label>
+        <input type="text" class="form-control" placeholder="e.g., Delhi" required />
+      </div>
+      <div class="mb-3">
+        <label>To</label>
+        <input type="text" class="form-control" placeholder="e.g., Chennai" required />
+      </div>
+      <div class="mb-3">
+        <label>Full Name</label>
+        <input type="text" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label>Date of Journey</label>
+        <input type="date" class="form-control" required />
+      </div>
+      <button class="btn btn-success">Proceed to Payment</button>
+    </form>
+  </div>
+
+  <!-- Payment Section -->
+  <div class="payment-section" id="payment-form">
+    <h3>UPI Payment</h3>
+    <form onsubmit="event.preventDefault(); showConfirmation();">
+      <p><strong>Total Amount:</strong> ₹900</p>
+      <div class="mb-3">
+        <label>Enter UPI ID</label>
+        <input type="text" class="form-control" placeholder="yourupi@bank" required />
+      </div>
+      <button class="btn btn-primary">Pay Now</button>
+    </form>
+  </div>
+
+  <!-- Confirmation Section -->
+  <div class="confirmation-section" id="confirmation-box">
+    <div class="confirmation-box">
+      <h2 class="text-success">Booking Confirmed!</h2>
+      <p>Your train ticket has been successfully booked.</p>
+      <p>Transaction ID: <strong>TRN123456789</strong></p>
+      <a href="/trainfilter" class="btn btn-outline-primary mt-3" onclick="resetFlow()">Book Another Train</a>
+      <a href="/traindashboard" class="btn btn-outline-secondary mt-3 ms-2">View Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Seat Modal -->
+<div class="modal fade" id="seatModal" tabindex="-1" aria-labelledby="seatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Your Seat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-wrap justify-content-center" id="seat-grid"></div>
+        <div class="text-center mt-3">
+          Selected Seat: <strong id="selected-seat-label">None</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-dismiss="modal" onclick="finalizeSeat()">Confirm Seat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+  let selectedTrain = "";
+  let selectedSeat = "";
+
+  function showClassSelection(train) {
+    selectedTrain = train;
+    document.getElementById("selected-train-title").textContent = "Select Class - " + train;
+    document.getElementById("class-section").style.display = "block";
+    document.getElementById("booking-form").style.display = "none";
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "none";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function selectClass(trainClass) {
+    document.getElementById("train-name").value = selectedTrain;
+    document.getElementById("train-class").value = trainClass;
+    document.getElementById("booking-form").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function showPayment() {
+    document.getElementById("payment-form").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function showConfirmation() {
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function resetFlow() {
+    document.getElementById("class-section").style.display = "none";
+    document.getElementById("booking-form").style.display = "none";
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "none";
+    window.scrollTo(0, 0);
+  }
+
+  function generateSeatGrid() {
+    const seatGrid = document.getElementById("seat-grid");
+    seatGrid.innerHTML = '';
+    const rows = 5;
+    const seatsPerRow = ['A', 'B', 'C', 'D'];
+    for (let row = 1; row <= rows; row++) {
+      seatsPerRow.forEach(seat => {
+        const seatId = seat + row;
+        const btn = document.createElement("button");
+        btn.className = "btn btn-outline-dark m-1";
+        btn.textContent = seatId;
+        btn.onclick = () => selectSeat(seatId, btn);
+        seatGrid.appendChild(btn);
+      });
+    }
+  }
+
+  function selectSeat(seatId, btn) {
+    selectedSeat = seatId;
+    document.getElementById("selected-seat-label").textContent = seatId;
+    document.querySelectorAll("#seat-grid button").forEach(b => b.classList.remove("btn-success"));
+    btn.classList.add("btn-success");
+  }
+
+  function finalizeSeat() {
+    if (selectedSeat !== '') {
+      document.getElementById("seat-number").value = selectedSeat;
+    }
+  }
+
+  document.getElementById("seatModal").addEventListener('show.bs.modal', generateSeatGrid);
+  function showConfirmation() {
+      // Get booking info
+      const booking = {
+        train: document.getElementById("train-name").value,
+        trainClass: document.getElementById("train-class").value,
+        seat: document.getElementById("seat-number").value,
+        from: document.querySelector("[placeholder='e.g., Delhi']").value,
+        to: document.querySelector("[placeholder='e.g., Chennai']").value,
+        name: document.querySelector("[placeholder='e.g., Delhi']").closest("form").querySelectorAll("input")[4].value,
+        date: document.querySelector("[type='date']").value,
+        amount: 900,
+        time: new Date().toLocaleString()
+      };
+
+      // Save to localStorage
+      let bookings = JSON.parse(localStorage.getItem("trainBookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("trainBookings", JSON.stringify(bookings));
+
+      // Show confirmation
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

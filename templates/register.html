@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: url('https://wallpapers.com/images/featured/travel-background-we1aqvt6zacj99uk.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, #00c6ff, #0072ff, #00ffcc, #00c6ff);
+            border-radius: 15px;
+            z-index: -1;
+            background-size: 400% 400%;
+            animation: animateBorder 8s linear infinite;
+        }
+
+        @keyframes animateBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button {
+            background: #0072ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #005ecb;
+        }
+
+        a {
+            color: #0072ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form method="POST" action="{{ url_for('register') }}">
+            <input type="text" name="username" placeholder="Username" required minlength="5">
+            <input type="password" name="password" placeholder="Password" required minlength="5">
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+</body>
+
+</html>

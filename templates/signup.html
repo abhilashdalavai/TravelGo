@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TravelGo - SignUp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-image: url("../static/images/loginbg.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            width: 500px;
+            height: auto;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+        }
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer-content h3 {
+            font-size: 1.8rem;
+        }
+        .footer-content p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">TravelGo</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{{ url_for('signup') }}">SignUp</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('aboutus') }}">About Us</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- SignUp Form -->
+<div class="card">
+    <h3 class="text-center" style="background-color: yellow; border-radius: 5px; padding: 10px;">SignUp</h3>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for message in messages %}
+            {{ message }}<br />
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('signup') }}" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" name="fname" class="form-control" id="fname" placeholder="First Name" required />
+            <label for="fname">First Name</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" name="lname" class="form-control" id="lname" placeholder="Last Name" required />
+            <label for="lname">Last Name</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required />
+            <label for="email">Email address</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" name="password" class="form-control" id="password" placeholder="Password" required />
+            <label for="password">Password</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" name="phone" class="form-control" id="phone" placeholder="Phone (Optional)" />
+            <label for="phone">Phone (Optional)</label>
+        </div>
+        Already have an account? <a href="{{ url_for('login') }}">Login</a><br /><br />
+        <button type="submit" class="btn btn-primary">SignUp</button>
+    </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-bottom">
+    <p>&copy; 2025 TravelGo. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

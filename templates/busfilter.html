@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>TravelGo - Bus Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f4f8fb;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .topbar {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card-custom {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+    }
+
+    .card-custom:hover {
+      transform: scale(1.02);
+    }
+
+    .bus-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .form-section,
+    .payment-section,
+    .confirmation-section,
+    .class-section {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .confirmation-box {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <h4 class="text-white m-0">TravelGo - Bus Booking</h4>
+  </div>
+
+  <div class="container py-4">
+    <!-- Buses -->
+    <div class="row" id="bus-list">
+      <!-- Cards for buses -->
+      <!-- (unchanged cards for VRL, Praveen, KSRTC) -->
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img src="https://coachbuildersindia.com/wp-content/uploads/2024/05/Vijayanand-Travels-Orders-100-Volvo-9600-Buses.webp" class="bus-img" alt="VRL Travels">
+          <div class="card-body">
+            <h5 class="card-title">VRL Travels</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('VRL Travels')">Book Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img src="https://commercialvehicle.in/wp-content/uploads/2017/12/1-copy.jpg" class="bus-img" alt="Praveen Travels">
+          <div class="card-body">
+            <h5 class="card-title">Praveen Travels</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('Praveen Travels')">Book Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img src="https://images.livemint.com/img/2023/02/22/1600x900/bengaluru_1677042673712_1677042680029_1677042680029.jpg" class="bus-img" alt="KSRTC">
+          <div class="card-body">
+            <h5 class="card-title">KSRTC</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('KSRTC')">Book Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Section -->
+    <div class="class-section" id="class-section">
+      <h3 class="text-center mb-4" id="selected-bus-title"></h3>
+      <div class="row text-center">
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>Seater</h5>
+            <button class="btn btn-success" onclick="selectClass('Seater')">Select</button>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>Sleeper</h5>
+            <button class="btn btn-success" onclick="selectClass('Sleeper')">Select</button>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>AC Sleeper</h5>
+            <button class="btn btn-success" onclick="selectClass('AC Sleeper')">Select</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="form-section" id="booking-form">
+      <h3>Passenger Details</h3>
+      <form onsubmit="event.preventDefault(); showPayment();">
+        <div class="mb-3">
+          <label>Bus</label>
+          <input type="text" id="bus-name" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label>Class</label>
+          <input type="text" id="bus-class" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label>Seat</label>
+          <input type="text" id="seat-number" class="form-control" readonly />
+          <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#seatModal">Select Seat</button>
+        </div>
+        <div class="mb-3">
+          <label>From</label>
+          <input type="text" class="form-control" id="from-location" placeholder="e.g., Hyderabad" required />
+        </div>
+        <div class="mb-3">
+          <label>To</label>
+          <input type="text" class="form-control" id="to-location" placeholder="e.g., Bangalore" required />
+        </div>
+        <div class="mb-3">
+          <label>Full Name</label>
+          <input type="text" class="form-control" id="passenger-name" required />
+        </div>
+        <div class="mb-3">
+          <label>Date of Journey</label>
+          <input type="date" class="form-control" id="journey-date" required />
+        </div>
+        <button class="btn btn-success">Proceed to Payment</button>
+      </form>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="payment-section" id="payment-form">
+      <h3>UPI Payment</h3>
+      <form onsubmit="event.preventDefault(); showConfirmation();">
+        <p><strong>Total Amount:</strong> ₹1200</p>
+        <div class="mb-3">
+          <label>Enter UPI ID</label>
+          <input type="text" class="form-control" placeholder="yourupi@bank" required />
+        </div>
+        <button class="btn btn-primary">Pay Now</button>
+      </form>
+    </div>
+
+    <!-- Confirmation Section -->
+    <div class="confirmation-section" id="confirmation-box">
+      <div class="confirmation-box">
+        <h2 class="text-success">Booking Confirmed!</h2>
+        <p>Your bus seat has been successfully booked.</p>
+        <p>Transaction ID: <strong>BUS123456789</strong></p>
+        <a href="/busfilter" class="btn btn-outline-primary mt-3" onclick="resetFlow()">Book Another Bus</a>
+        <a href="/busdashboard" class="btn btn-outline-secondary mt-3 ms-2">View Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seat Modal -->
+  <div class="modal fade" id="seatModal" tabindex="-1" aria-labelledby="seatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Your Seat</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-wrap justify-content-center" id="seat-grid"></div>
+          <div class="text-center mt-3">
+            Selected Seat: <strong id="selected-seat-label">None</strong>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-dismiss="modal" onclick="finalizeSeat()">Confirm Seat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    let selectedBus = "";
+    let selectedSeat = "";
+
+    function showClassSelection(bus) {
+      selectedBus = bus;
+      document.getElementById("selected-bus-title").textContent = "Select Class - " + bus;
+      document.getElementById("class-section").style.display = "block";
+      document.getElementById("booking-form").style.display = "none";
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "none";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function selectClass(busClass) {
+      document.getElementById("bus-name").value = selectedBus;
+      document.getElementById("bus-class").value = busClass;
+      document.getElementById("booking-form").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function showPayment() {
+      document.getElementById("payment-form").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function showConfirmation() {
+      const booking = {
+        busName: document.getElementById("bus-name").value,
+        busClass: document.getElementById("bus-class").value,
+        seat: document.getElementById("seat-number").value,
+        from: document.querySelector("#from-location").value,
+        to: document.querySelector("#to-location").value,
+        name: document.querySelector("#passenger-name").value,
+        date: document.querySelector("#journey-date").value,
+        amount: 900,
+        time: new Date().toLocaleString()
+      };
+
+      let bookings = JSON.parse(localStorage.getItem("busBookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("busBookings", JSON.stringify(bookings));
+
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function resetFlow() {
+      document.getElementById("class-section").style.display = "none";
+      document.getElementById("booking-form").style.display = "none";
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "none";
+      window.scrollTo(0, 0);
+    }
+
+    function generateSeatGrid() {
+      const seatGrid = document.getElementById("seat-grid");
+      seatGrid.innerHTML = '';
+      const rows = 4;
+      const seatsPerRow = ['A', 'B', 'C', 'D'];
+      for (let row = 1; row <= rows; row++) {
+        seatsPerRow.forEach(seat => {
+          const seatId = seat + row;
+          const btn = document.createElement("button");
+          btn.className = "btn btn-outline-dark m-1";
+          btn.textContent = seatId;
+          btn.onclick = () => selectSeat(seatId, btn);
+          seatGrid.appendChild(btn);
+        });
+      }
+    }
+
+    function selectSeat(seatId, btn) {
+      selectedSeat = seatId;
+      document.getElementById("selected-seat-label").textContent = seatId;
+      document.querySelectorAll("#seat-grid button").forEach(b => b.classList.remove("btn-success"));
+      btn.classList.add("btn-success");
+    }
+
+    function finalizeSeat() {
+      if (selectedSeat !== '') {
+        document.getElementById("seat-number").value = selectedSeat;
+      }
+    }
+
+    document.getElementById("seatModal").addEventListener('show.bs.modal', generateSeatGrid);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

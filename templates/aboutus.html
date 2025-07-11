@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TravelGo - Your All-in-One Travel Companion</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      padding: 15px 30px;
+      color: white;
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .navbar .logo img {
+      width: 40px;
+      margin-right: 10px;
+    }
+
+    .navbar .home-btn a {
+      background: white;
+      color: #007bff;
+      padding: 8px 18px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .navbar .home-btn a:hover {
+      background: #e0e0e0;
+    }
+
+    header {
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: white;
+      padding: 60px 20px 40px;
+      text-align: center;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .feature {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-8px);
+    }
+
+    .feature img {
+      width: 80px;
+      margin-bottom: 15px;
+    }
+
+    .feature h3 {
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    .benefits {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .benefits h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #343a40;
+    }
+
+    .benefits ul {
+      list-style: none;
+      padding-left: 0;
+      line-height: 1.8;
+    }
+
+    .benefits ul li::before {
+      content: '✔️';
+      margin-right: 10px;
+      color: green;
+    }
+
+    footer {
+      background: #343a40;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .navbar .home-btn {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+  <div class="logo">
+    <img src="https://img.icons8.com/fluency/96/worldwide-location.png" alt="TravelGo Icon"/>
+    TravelGo
+  </div>
+  <br><br>
+  <div class="home-btn">
+    <a href="index.html">Home</a>
+  </div>
+</div>
+
+<!-- Hero Header -->
+<header>
+  <h1>Welcome to TravelGo</h1>
+  <p>Your all-in-one travel booking solution for Bus, Train, Flight, and Hotel reservations</p>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+  <section class="features">
+    <div class="feature">
+      <img src="https://img.icons8.com/color/96/bus.png" alt="Bus Icon"/>
+      <h3>Bus Booking</h3>
+      <p>Book intercity and local buses with real-time seat selection, prices, and timings.</p>
+    </div>
+    <div class="feature">
+      <img src="https://img.icons8.com/color/96/train.png" alt="Train Icon"/>
+      <h3>Train Booking</h3>
+      <p>Check train availability, schedules, and book your tickets hassle-free in seconds.</p>
+    </div>
+    <div class="feature">
+      <img src="https://img.icons8.com/color/96/airplane-take-off.png" alt="Flight Icon"/>
+      <h3>Flight Booking</h3>
+      <p>Find best deals across domestic and international flights with instant confirmations.</p>
+    </div>
+    <div class="feature">
+      <img src="https://cdn-icons-png.flaticon.com/512/3009/3009710.png" alt="Hotel Icon"/>
+      <h3>Hotel Booking</h3>
+      <p>Explore thousands of hotels, compare prices, and book comfortable stays instantly.</p>
+    </div>
+  </section>
+
+  <section class="benefits">
+    <h2>Why Choose TravelGo?</h2>
+    <ul>
+      <li>Unified platform for all your travel needs</li>
+      <li>Real-time availability and booking confirmation</li>
+      <li>Secure payment and booking management</li>
+      <li>User-friendly, fast, and mobile-responsive interface</li>
+      <li>24/7 customer support and assistance</li>
+      <li>Affordable pricing with exclusive offers</li>
+    </ul>
+  </section>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 TravelGo. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TravelGo - Hotel Room Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f4f8fb;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .topbar {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card-custom {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+    }
+    .card-custom:hover {
+      transform: scale(1.02);
+    }
+    .hotel-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .star {
+      color: gold;
+    }
+    .form-section, .payment-section, .confirmation-section, .room-type-section {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    .confirmation-box {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar with Home Button -->
+<div class="topbar">
+  <h4 class="text-white m-0">TravelGo - Hotel Room Booking</h4>
+</div>
+
+<div class="container py-4">
+
+  <!-- Hotels -->
+  <div class="row" id="hotel-list">
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://gos3.ibcdn.com/2jiivgst1t0b9309blv16v0s0052.jpg" class="hotel-img" alt="Hotel Sunshine">
+        <div class="card-body">
+          <h5 class="card-title">Hotel Sunshine</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9733;&#9734;</span></p>
+          <button class="btn btn-primary w-100" onclick="showRoomTypes('Hotel Sunshine')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://gos3.ibcdn.com/9abdb706-7d01-4ec9-809c-b281b7629a48.jpg" class="hotel-img" alt="Hotel Breeze">
+        <div class="card-body">
+          <h5 class="card-title">Hotel Breeze</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9734;&#9734;</span></p>
+          <button class="btn btn-primary w-100" onclick="showRoomTypes('Hotel Breeze')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card-custom card">
+        <img src="https://www.watg.com/wp-content/uploads/2022/05/131019_N35_website.jpg" class="hotel-img" alt="Hotel Paradise">
+        <div class="card-body">
+          <h5 class="card-title">Hotel Paradise</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</span></p>
+          <button class="btn btn-primary w-100" onclick="showRoomTypes('Hotel Paradise')">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Types (No Images) -->
+  <div class="room-type-section" id="room-types">
+    <h3 class="text-center mb-4" id="selected-hotel-title"></h3>
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>Deluxe Room</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9733;&#9734;</span></p>
+          <button class="btn btn-success" onclick="selectRoom('Deluxe Room')">Select</button>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>Suite Room</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</span></p>
+          <button class="btn btn-success" onclick="selectRoom('Suite Room')">Select</button>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-light rounded shadow-sm">
+          <h5>Standard Room</h5>
+          <p><span class="star">&#9733;&#9733;&#9733;&#9734;&#9734;</span></p>
+          <button class="btn btn-success" onclick="selectRoom('Standard Room')">Select</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="form-section" id="booking-form">
+    <h3>Room Booking Form</h3>
+    <form onsubmit="event.preventDefault(); showPayment();">
+      <div class="mb-3">
+        <label>Hotel</label>
+        <input type="text" id="hotel-name" class="form-control" readonly />
+      </div>
+      <div class="mb-3">
+        <label>Room Type</label>
+        <input type="text" id="room-type" class="form-control" readonly />
+      </div>
+      <div class="mb-3">
+        <label>Full Name</label>
+        <input type="text" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label>Check-in Date</label>
+        <input type="date" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label>Check-out Date</label>
+        <input type="date" class="form-control" required />
+      </div>
+      <button class="btn btn-success">Proceed to Payment</button>
+    </form>
+  </div>
+
+  <!-- Payment Section -->
+  <div class="payment-section" id="payment-form">
+    <h3>UPI Payment</h3>
+    <form onsubmit="event.preventDefault(); showConfirmation();">
+      <p><strong>Total Amount:</strong> ₹3500</p>
+      <div class="mb-3">
+        <label>Enter UPI ID</label>
+        <input type="text" class="form-control" placeholder="yourupi@bank" required />
+      </div>
+      <button class="btn btn-primary">Pay Now</button>
+    </form>
+  </div>
+
+  <!-- Confirmation Section -->
+  <div class="confirmation-section" id="confirmation-box">
+    <div class="confirmation-box">
+      <h2 class="text-success">Booking Confirmed!</h2>
+      <p>Your room has been successfully booked.</p>
+      <p>Transaction ID: <strong>TXN987654321</strong></p>
+      <a href="/hotel" class="btn btn-outline-primary mt-3" onclick="resetFlow()">Book Another Room</a>
+      <a href="/hoteldashboard" class="btn btn-outline-secondary mt-3 ms-2">View Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedHotel = "";
+
+  function showRoomTypes(hotel) {
+    selectedHotel = hotel;
+    document.getElementById("selected-hotel-title").textContent = "Select Room Type - " + hotel;
+    document.getElementById("room-types").style.display = "block";
+    document.getElementById("booking-form").style.display = "none";
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "none";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function selectRoom(roomType) {
+    document.getElementById("hotel-name").value = selectedHotel;
+    document.getElementById("room-type").value = roomType;
+    document.getElementById("booking-form").style.display = "block";
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "none";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function showPayment() {
+    document.getElementById("payment-form").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function showConfirmation() {
+    // Collect form values
+    const hotel = document.getElementById("hotel-name").value;
+    const room = document.getElementById("room-type").value;
+    const name = document.querySelector("#booking-form input[type='text']").value;
+    const checkin = document.querySelectorAll("#booking-form input[type='date']")[0].value;
+    const checkout = document.querySelectorAll("#booking-form input[type='date']")[1].value;
+
+    // Create booking object
+    const booking = {
+      hotel,
+      room,
+      name,
+      checkin,
+      checkout,
+      time: new Date().toLocaleString()
+    };
+
+    // Save booking to localStorage
+    const bookings = JSON.parse(localStorage.getItem("hotelBookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("hotelBookings", JSON.stringify(bookings));
+
+    // Show confirmation UI
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function resetFlow() {
+    document.getElementById("room-types").style.display = "none";
+    document.getElementById("booking-form").style.display = "none";
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("confirmation-box").style.display = "none";
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>

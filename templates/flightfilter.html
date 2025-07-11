@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>TravelGo - Flight Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f4f8fb;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .topbar {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card-custom {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+    }
+
+    .card-custom:hover {
+      transform: scale(1.02);
+    }
+
+    .flight-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .form-section,
+    .payment-section,
+    .confirmation-section,
+    .class-section {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .confirmation-box {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+   
+        <h4 class="text-white m-0">TravelGo - Flight Booking</h4>
+  </div>
+
+  <div class="container py-4">
+    <!-- Flights -->
+    <div class="row" id="flight-list">
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img
+            src="https://www.salesforce.com/content/dam/web/en_in/www/images/resources/customer_stories/jumbotron-indigo.png"
+            class="flight-img" alt="IndiGo">
+          <div class="card-body">
+            <h5 class="card-title">IndiGo Airlines</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('IndiGo Airlines')">Book Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img
+            src="https://images.travelandleisureasia.com/wp-content/uploads/sites/3/2024/07/08152010/air-india-7.jpeg?tr=w-1200,q-60"
+            class="flight-img" alt="Air India">
+          <div class="card-body">
+            <h5 class="card-title">Air India</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('Air India')">Book Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-custom card">
+          <img src="https://static.businessworld.in/1582869803_qb0Z19_Vistara.jpg" class="flight-img" alt="Vistara">
+          <div class="card-body">
+            <h5 class="card-title">Vistara Airlines</h5>
+            <button class="btn btn-primary w-100" onclick="showClassSelection('Vistara Airlines')">Book Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Section -->
+    <div class="class-section" id="class-section">
+      <h3 class="text-center mb-4" id="selected-flight-title"></h3>
+      <div class="row text-center">
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>Economy Class</h5>
+            <button class="btn btn-success" onclick="selectClass('Economy')">Select</button>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>Business Class</h5>
+            <button class="btn btn-success" onclick="selectClass('Business')">Select</button>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="p-4 bg-light rounded shadow-sm">
+            <h5>First Class</h5>
+            <button class="btn btn-success" onclick="selectClass('First')">Select</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="form-section" id="booking-form">
+      <h3>Passenger Details</h3>
+      <form onsubmit="event.preventDefault(); showPayment();">
+        <div class="mb-3">
+          <label>Flight</label>
+          <input type="text" id="flight-name" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label>Class</label>
+          <input type="text" id="flight-class" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label>Seat</label>
+          <input type="text" id="seat-number" class="form-control" readonly />
+          <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="modal" data-bs-target="#seatModal">Select
+            Seat</button>
+        </div>
+        <div class="mb-3">
+          <label>From</label>
+          <input type="text" class="form-control" placeholder="e.g., Hyderabad" required />
+        </div>
+        <div class="mb-3">
+          <label>To</label>
+          <input type="text" class="form-control" placeholder="e.g., Mumbai" required />
+        </div>
+        <div class="mb-3">
+          <label>Full Name</label>
+          <input type="text" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label>Date of Journey</label>
+          <input type="date" class="form-control" required />
+        </div>
+        <button class="btn btn-success">Proceed to Payment</button>
+      </form>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="payment-section" id="payment-form">
+      <h3>UPI Payment</h3>
+      <form onsubmit="event.preventDefault(); showConfirmation();">
+        <p><strong>Total Amount:</strong> ₹4500</p>
+        <div class="mb-3">
+          <label>Enter UPI ID</label>
+          <input type="text" class="form-control" placeholder="yourupi@bank" required />
+        </div>
+        <button class="btn btn-primary">Pay Now</button>
+      </form>
+    </div>
+
+    <!-- Confirmation Section -->
+    <div class="confirmation-section" id="confirmation-box">
+      <div class="confirmation-box">
+        <h2 class="text-success">Booking Confirmed!</h2>
+        <p>Your flight has been successfully booked.</p>
+        <p>Transaction ID: <strong id="txn-id">TXN123456789</strong></p>
+        <a href="/flightfilter" class="btn btn-outline-primary mt-3" onclick="resetFlow()">Book Another Flight</a>
+        <a href="/flightdashboard" class="btn btn-outline-secondary mt-3 ms-2">View Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seat Modal -->
+  <div class="modal fade" id="seatModal" tabindex="-1" aria-labelledby="seatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Your Seat</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-wrap justify-content-center" id="seat-grid"></div>
+          <div class="text-center mt-3">
+            Selected Seat: <strong id="selected-seat-label">None</strong>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-dismiss="modal" onclick="finalizeSeat()">Confirm Seat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    let selectedFlight = "";
+    let selectedSeat = "";
+
+    function showClassSelection(flight) {
+      selectedFlight = flight;
+      document.getElementById("selected-flight-title").textContent = "Select Class - " + flight;
+      document.getElementById("class-section").style.display = "block";
+      document.getElementById("booking-form").style.display = "none";
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "none";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function selectClass(fClass) {
+      document.getElementById("flight-name").value = selectedFlight;
+      document.getElementById("flight-class").value = fClass;
+      document.getElementById("booking-form").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function showPayment() {
+      document.getElementById("payment-form").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Save booking data to localStorage
+    function saveBookingData() {
+      // Get form inputs
+      const flight = document.getElementById("flight-name").value;
+      const flightClass = document.getElementById("flight-class").value;
+      const seat = document.getElementById("seat-number").value;
+      const from = document.querySelector("#booking-form input[placeholder='e.g., Hyderabad']").value;
+      const to = document.querySelector("#booking-form input[placeholder='e.g., Mumbai']").value;
+      const fullName = document.querySelector("#booking-form input[required][type='text']:not(#flight-name):not(#flight-class):not(#seat-number)").value;
+      const dateOfJourney = document.querySelector("#booking-form input[type='date']").value;
+
+      const booking = {
+        flight, flightClass, seat, from, to, fullName, dateOfJourney,
+        transactionId: "TXN" + Math.floor(Math.random() * 1000000000)
+      };
+
+      // Get existing bookings from localStorage or empty array
+      const bookings = JSON.parse(localStorage.getItem("flightBookings") || "[]");
+
+      bookings.push(booking);
+
+      // Save updated bookings array back to localStorage
+      localStorage.setItem("flightBookings", JSON.stringify(bookings));
+
+      return booking.transactionId;
+    }
+
+    // Modify showConfirmation to save booking and show transaction ID dynamically
+    function showConfirmation() {
+      // Save booking data first
+      const txnId = saveBookingData();
+
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "block";
+
+      // Update Transaction ID text dynamically
+      document.getElementById("txn-id").textContent = txnId;
+
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function resetFlow() {
+      document.getElementById("class-section").style.display = "none";
+      document.getElementById("booking-form").style.display = "none";
+      document.getElementById("payment-form").style.display = "none";
+      document.getElementById("confirmation-box").style.display = "none";
+      window.scrollTo(0, 0);
+    }
+
+    function generateSeatGrid() {
+      const seatGrid = document.getElementById("seat-grid");
+      seatGrid.innerHTML = '';
+      const rows = 5;
+      const seatsPerRow = ['A', 'B', 'C', 'D', 'E', 'F'];
+      for (let row = 1; row <= rows; row++) {
+        seatsPerRow.forEach(seat => {
+          const seatId = seat + row;
+          const btn = document.createElement("button");
+          btn.className = "btn btn-outline-dark m-1";
+          btn.textContent = seatId;
+          btn.onclick = () => selectSeat(seatId, btn);
+          seatGrid.appendChild(btn);
+        });
+      }
+    }
+
+    function selectSeat(seatId, btn) {
+      selectedSeat = seatId;
+      document.getElementById("selected-seat-label").textContent = seatId;
+      document.querySelectorAll("#seat-grid button").forEach(b => b.classList.remove("btn-success"));
+      btn.classList.add("btn-success");
+    }
+
+    function finalizeSeat() {
+      if (selectedSeat !== '') {
+        document.getElementById("seat-number").value = selectedSeat;
+      }
+    }
+
+    document.getElementById("seatModal").addEventListener('show.bs.modal', generateSeatGrid);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
