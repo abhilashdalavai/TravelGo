@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Train Booking - TravelGo</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      background: url("static/images/train1.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #eee; /* lighter text for dark background */
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 15, 0.85); /* darker overlay */
+      z-index: -1;
+    }
+
+    .navbar {
+      background-color: rgba(10, 10, 30, 0.95); /* dark navy */
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 26px;
+      color: #f0c000; /* golden highlight */
+    }
+
+    .navbar a {
+      color: #f0c000;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px;
+      background: rgba(25, 25, 40, 0.7); /* dark transparent */
+      border-radius: 12px;
+      backdrop-filter: blur(15px);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #f0c000;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    select, input[type="date"], input[type="number"], button {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    select, input[type="date"], input[type="number"] {
+      background-color: #191919;
+      color: #eee;
+    }
+
+    select option {
+      background-color: #222;
+      color: #eee;
+    }
+
+    button {
+      background-color: #f0c000;
+      color: #101040;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c9a800;
+    }
+
+    .filters {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .filters label {
+      margin-right: 15px;
+      font-weight: bold;
+      color: #eee;
+    }
+
+    .train-list {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .train-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(40, 40, 60, 0.8);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+      color: #eee;
+    }
+
+    .train-card strong {
+      font-size: 18px;
+      color: #f0c000;
+    }
+
+    .train-card div {
+      font-size: 16px;
+      color: #ddd;
+    }
+
+    .book-btn {
+      background-color: #f0c000;
+      color: #101040;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .book-btn:hover {
+      background-color: #c9a800;
+    }
+
+    @media screen and (max-width: 768px) {
+      .train-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>TravelGo</h1>
+    <a href="/dashboard">Dashboard</a>
+  </div>
+
+  <div class="container">
+    <h2>🚆 Book Your Train</h2>
+    <form id="search-form">
+      <select id="source">
+        <option value="">From</option>
+        <option value="Hyderabad">Hyderabad</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Chennai">Chennai</option>
+      </select>
+
+      <select id="destination">
+        <option value="">To</option>
+        <option value="Hyderabad">Hyderabad</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Chennai">Chennai</option>
+      </select>
+
+      <input type="date" id="travel-date" />
+      <input type="number" id="numPassengers" placeholder="Passengers" min="1" value="1" />
+      <button type="button" onclick="filterTrains()">Search</button>
+    </form>
+
+    <div class="filters">
+      <label><input type="checkbox" id="1st Class"> 1st Class</label>
+      <label><input type="checkbox" id="2nd AC"> 2nd AC</label>
+      <label><input type="checkbox" id="3rd AC"> 3rd AC</label>
+      <label><input type="checkbox" id="Sleeper"> Sleeper</label>
+      <label><input type="checkbox" id="General"> General</label>
+    </div>
+
+    <div id="train-list" class="train-list"></div>
+  </div>
+
+<script>
+  const trains = [
+    // Hyderabad → Bangalore
+    { name: "Rajdhani Express", type: "1st Class", time: "07:00 AM", price: 1450, source: "Hyderabad", destination: "Bangalore" },
+    { name: "Kacheguda Intercity", type: "2nd AC", time: "09:30 AM", price: 1150, source: "Hyderabad", destination: "Bangalore" },
+    { name: "Nanded Express", type: "3rd AC", time: "12:00 PM", price: 900, source: "Hyderabad", destination: "Bangalore" },
+    { name: "Sabari Express", type: "Sleeper", time: "03:45 PM", price: 500, source: "Hyderabad", destination: "Bangalore" },
+    { name: "Passenger Special", type: "General", time: "06:30 PM", price: 300, source: "Hyderabad", destination: "Bangalore" },
+
+    // Hyderabad → Chennai
+    { name: "Charminar Express", type: "1st Class", time: "06:00 AM", price: 1400, source: "Hyderabad", destination: "Chennai" },
+    { name: "Falaknuma Express", type: "2nd AC", time: "08:15 AM", price: 1100, source: "Hyderabad", destination: "Chennai" },
+    { name: "Duronto Express", type: "3rd AC", time: "01:30 PM", price: 850, source: "Hyderabad", destination: "Chennai" },
+    { name: "Coringa Express", type: "Sleeper", time: "04:15 PM", price: 450, source: "Hyderabad", destination: "Chennai" },
+    { name: "Krishna Fast Passenger", type: "General", time: "08:30 PM", price: 280, source: "Hyderabad", destination: "Chennai" },
+
+    // Chennai → Bangalore
+    { name: "Shatabdi Express", type: "1st Class", time: "06:30 AM", price: 1350, source: "Chennai", destination: "Bangalore" },
+    { name: "Brindavan Express", type: "2nd AC", time: "10:00 AM", price: 1000, source: "Chennai", destination: "Bangalore" },
+    { name: "Sanghamitra Express", type: "3rd AC", time: "02:30 PM", price: 780, source: "Chennai", destination: "Bangalore" },
+    { name: "Yelagiri Express", type: "Sleeper", time: "05:00 PM", price: 420, source: "Chennai", destination: "Bangalore" },
+    { name: "Local Superfast", type: "General", time: "07:30 PM", price: 250, source: "Chennai", destination: "Bangalore" },
+
+    // Bangalore → Chennai
+    { name: "KSR Chennai Mail", type: "1st Class", time: "05:45 AM", price: 1400, source: "Bangalore", destination: "Chennai" },
+    { name: "Mysore-Chennai SF", type: "2nd AC", time: "09:15 AM", price: 1050, source: "Bangalore", destination: "Chennai" },
+    { name: "Bangalore Express", type: "3rd AC", time: "01:45 PM", price: 800, source: "Bangalore", destination: "Chennai" },
+    { name: "Kaveri Express", type: "Sleeper", time: "04:30 PM", price: 470, source: "Bangalore", destination: "Chennai" },
+    { name: "City Express", type: "General", time: "09:00 PM", price: 260, source: "Bangalore", destination: "Chennai" },
+
+    // Chennai → Hyderabad
+    { name: "Chennai-Hyderabad SF", type: "1st Class", time: "07:00 AM", price: 1380, source: "Chennai", destination: "Hyderabad" },
+    { name: "East Coast Express", type: "2nd AC", time: "11:15 AM", price: 980, source: "Chennai", destination: "Hyderabad" },
+    { name: "Janmabhoomi Express", type: "3rd AC", time: "02:00 PM", price: 750, source: "Chennai", destination: "Hyderabad" },
+    { name: "Circar Express", type: "Sleeper", time: "06:00 PM", price: 400, source: "Chennai", destination: "Hyderabad" },
+    { name: "Passenger Express", type: "General", time: "10:00 PM", price: 240, source: "Chennai", destination: "Hyderabad" }
+  ];
+
+  function filterTrains() {
+    const source = document.getElementById("source").value;
+    const destination = document.getElementById("destination").value;
+    const date = document.getElementById("travel-date").value;
+    const numPassengers = parseInt(document.getElementById("numPassengers").value);
+    const list = document.getElementById("train-list");
+    list.innerHTML = "";
+
+    if (!source || !destination || !date || numPassengers < 1) {
+      alert("Please fill all fields correctly.");
+      return;
+    }
+
+    if (source === destination) {
+      alert("Source and destination cannot be the same.");
+      return;
+    }
+
+    const filters = ["1st Class", "2nd AC", "3rd AC", "Sleeper", "General"];
+    const selected = filters.filter(type => document.getElementById(type).checked);
+
+    const results = trains.filter(t =>
+      t.source === source &&
+      t.destination === destination &&
+      (selected.length === 0 || selected.includes(t.type))
+    );
+
+    if (results.length === 0) {
+      list.innerHTML = "<p>No trains found for selected route and filters.</p>";
+      list.style.display = 'block';
+      return;
+    }
+
+    results.forEach(train => {
+      const card = document.createElement("div");
+      card.className = "train-card";
+      card.innerHTML = `
+        <div>
+          <strong>${train.name}</strong><br>
+          ${train.type} • ${train.time} • ₹${train.price}/person
+        </div>
+        <button class="book-btn" onclick='bookTrain(${JSON.stringify(train)}, "${date}", ${numPassengers})'>Book</button>
+      `;
+      list.appendChild(card);
+    });
+
+    list.style.display = 'block';
+  }
+
+  function bookTrain(train, date, numPassengers) {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/book";
+
+    const fields = [
+      { name: "type", value: "Train" },
+      { name: "source", value: train.source },
+      { name: "destination", value: train.destination },
+      { name: "date", value: date },
+      { name: "details", value: `${train.name} | ${train.type} | ${train.time}` },
+      { name: "price", value: train.price * numPassengers }
+    ];
+
+    fields.forEach(f => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = f.name;
+      input.value = f.value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>
+</body>
+</html>

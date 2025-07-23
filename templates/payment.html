@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment - TravelGo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    .navbar {
+      background-color: #1f1f1f;
+      padding: 15px 30px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .navbar a {
+      color: #90caf9;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 40px;
+      background: #1e1e1e;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      color: #90caf9;
+      margin-bottom: 30px;
+    }
+
+    .booking-details {
+      background-color: #2c2c2c;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .booking-details strong {
+      color: #90caf9;
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    select, input[type="text"] {
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      width: 100%;
+    }
+
+    .pay-btn {
+      background-color: #1976d2;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .pay-btn:hover {
+      background-color: #1565c0;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .back-link {
+      display: inline-block;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #90caf9;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>TravelGo</h1>
+    <a href="/dashboard">Dashboard</a>
+  </div>
+
+  <div class="container">
+    <h2>Confirm and Pay</h2>
+
+    <div class="booking-details">
+      <p><strong>Route:</strong> {{ booking.details or "Bus Name Missing" }}</p>
+      <p><strong>Date:</strong> {{ booking.date }}</p>
+      <p><strong>Seats:</strong> {{ booking.seat }}</p>
+      <p><strong>Total Price:</strong> ₹{{ booking.price }}</p>
+    </div>
+
+    <form method="POST" action="/payment">
+      <input type="hidden" name="amount" value="{{ booking.price }}">
+
+      <label for="method">Payment Method:</label>
+      <select name="method" required>
+        <option value="">-- Select Payment Method --</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="UPI">UPI</option>
+        <option value="Net Banking">Net Banking</option>
+        <option value="Wallet">Wallet</option>
+      </select>
+
+      <label for="reference">Transaction Reference:</label>
+      <input type="text" name="reference" placeholder="Enter transaction/reference ID" required>
+
+      <button type="submit" class="pay-btn">Pay ₹{{ booking.price }}</button>
+    </form>
+
+    <p class="note">* This is a demo UI. No actual payment is processed.</p>
+    <a href="/" class="back-link">← Back to Home</a>
+  </div>
+
+</body>
+</html>
