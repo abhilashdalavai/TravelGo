@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'devkey')
 
 # AWS Setup
-dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
-sns = boto3.client('sns', region_name='ap-south-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+sns = boto3.client('sns', region_name='us-east-1')
 
 # Tables
 users_table = dynamodb.Table('travel-Users')
@@ -228,4 +228,4 @@ def logout():
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
