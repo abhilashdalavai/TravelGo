@@ -18,7 +18,8 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 sns = boto3.client('sns', region_name='us-east-1')
 
 # SNS Topic ARN from environment
-SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+# SNS Topic ARN from environment or fallback to default
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN', 'arn:aws:sns:us-east-1:842676002305:TravelGo')
 
 # Tables
 users_table = dynamodb.Table('travel-Users')
