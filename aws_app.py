@@ -3,8 +3,12 @@ import uuid
 import boto3
 import os
 from decimal import Decimal
-from boto3.dynamodb.conditions import Attr, Key
+from boto3.dynamodb.conditions import Key
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'devkey')
@@ -13,11 +17,14 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'devkey')
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 sns = boto3.client('sns', region_name='us-east-1')
 
+# SNS Topic ARN from environment
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+
 # Tables
 users_table = dynamodb.Table('travel-Users')
 bookings_table = dynamodb.Table('Bookings')
 
-# Static Data
+# Static Data (buses, trains, flights, hotels) — same as before...
 transport_data = {
     'bus': [
         {'id': 'B001', 'name': 'Sharma Travels', 'source': 'Delhi', 'destination': 'Jaipur', 'departure': '08:00', 'arrival': '14:00', 'price': 800, 'seats': 40},
@@ -56,10 +63,7 @@ def register():
             response = users_table.get_item(Key={'email': email})
             if 'Item' in response:
                 return render_template('register.html', message="User already exists.")
-            
-            # Hash password before storing
             hashed_pw = generate_password_hash(request.form['password'])
-
             users_table.put_item(Item={
                 'email': email,
                 'name': request.form['name'],
@@ -107,7 +111,6 @@ def dashboard():
     try:
         user_resp = users_table.get_item(Key={'email': email})
         user = user_resp.get('Item')
-        # Query bookings by email and order by booking_id (Sort Key)
         response = bookings_table.query(
             KeyConditionExpression=Key('email').eq(email)
         )
@@ -117,7 +120,6 @@ def dashboard():
         print("DynamoDB error in dashboard:", e)
         return redirect('/login')
 
-# Transport Pages
 @app.route('/bus', methods=['GET', 'POST'])
 def bus():
     if request.method == 'POST':
@@ -154,12 +156,10 @@ def hotels():
 def select_seats():
     return render_template("select_seats.html")
 
-# Booking
 @app.route('/book', methods=['POST'])
 def book():
     if 'user' not in session:
         return redirect('/login')
-
     session['pending_booking'] = {
         "booking_id": str(uuid.uuid4())[:8],
         "type": request.form['type'],
@@ -178,48 +178,37 @@ def book():
 def payment():
     if 'user' not in session or 'pending_booking' not in session:
         return redirect('/login')
-
     booking = session.pop('pending_booking')
     booking['payment_method'] = request.form['method']
     booking['payment_reference'] = request.form['reference']
-
     try:
         bookings_table.put_item(Item=booking)
-
-        # SNS Booking Notification
         sns.publish(
-            TopicArn=os.getenv('SNS_TOPIC_ARN'),
+            TopicArn=SNS_TOPIC_ARN,
             Message=f"✅ Booking Confirmed!\n{booking['details']} on {booking['date']} for ₹{booking['price']}",
             Subject="TravelGo Booking Confirmation"
         )
     except Exception as e:
         print("Booking or SNS error:", e)
-
     return redirect('/dashboard')
 
 @app.route('/remove_booking', methods=['POST'])
 def remove_booking():
     if 'user' not in session:
         return redirect('/login')
-
     email = session['user']
     booking_id = request.form.get('booking_id')
-
     try:
         bookings_table.delete_item(
-            Key={
-                'email': email,
-                'booking_id': booking_id
-            }
+            Key={'email': email, 'booking_id': booking_id}
         )
         sns.publish(
-            TopicArn=os.getenv('SNS_TOPIC_ARN'),
+            TopicArn=SNS_TOPIC_ARN,
             Message=f"❌ Booking Canceled\nBooking ID: {booking_id}",
             Subject="TravelGo Cancellation"
         )
     except Exception as e:
         print("Delete booking or SNS error:", e)
-
     return redirect('/dashboard')
 
 @app.route('/logout')
